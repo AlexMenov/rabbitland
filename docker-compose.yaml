@@ -1,0 +1,28 @@
+services:
+  postgres-orchestrator:
+    image: 'postgres:latest'
+    container_name: postgres-orchestrator
+    environment:
+      POSTGRES_DB: ${postgres_orchestrator_db}
+      POSTGRES_PASSWORD: ${postgres_orchestrator_pass}
+      POSTGRES_USER: ${postgres_orchestrator_user}
+    ports:
+      - ${postgres_orchestrator_port}:5432
+  postgres-worker:
+    image: 'postgres:latest'
+    container_name: postgres-worker
+    environment:
+      POSTGRES_DB: ${postgres_worker_db}
+      POSTGRES_PASSWORD: ${postgres_worker_pass}
+      POSTGRES_USER: ${postgres_worker_user}
+    ports:
+      - ${postgres_worker_port}:5432
+  rabbitmq:
+    image: 'rabbitmq:latest'
+    container_name: rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: ${rabbitmq_user}
+      RABBITMQ_DEFAULT_PASS: ${rabbitmq_pass}
+    ports:
+      - ${rabbitmq_orchestrator_port}:5672
+      - ${rabbitmq_worker_port}:5672
