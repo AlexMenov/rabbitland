@@ -32,26 +32,30 @@ public class DomainJobService {
     }
 
     @Transactional
-    public JobResponse updateJobDomain(Long id, JobRequest jobRequest) {
-//        Optional<JobDomain> domainJob = domainJobRepository.findById(id);
-//        domainJob.ifPresent(jobDomain -> jobDomain.setMessage(jobRequest.message()));
-//        domainJob = domainJobRepository.save(domainJob.get());
-        return null;
+    public Optional<JobResponse> updateJobDomain(Long id, JobRequest jobRequest) {
+        Optional<JobDomain> domainJob = domainJobRepository.findById(id);
+        domainJob.ifPresent(jobDomain -> jobDomain.setMessage(jobRequest.message()));
+        return Optional.of(
+                JobMapper.toJobResponse(
+                        domainJobRepository.save(domainJob.orElseThrow()
+                        )
+                )
+        );
     }
 
     @Transactional
-    public Optional<JobResponse> deleteJobDomain(String id) { // Optional
-//        JobModel domainJob = domainJobRepository
-//                .findById(Long.valueOf(id))
-//                .orElseThrow();
-//        domainJobRepository.deleteById(domainJob.getId());
-        return null;
+    public Optional<JobResponse> deleteJobDomain(String id) {
+        JobDomain domainJob = domainJobRepository
+                .findById(Long.valueOf(id))
+                .orElseThrow();
+        domainJobRepository.deleteById(domainJob.getId());
+        return Optional.of(JobMapper.toJobResponse(domainJob));
     }
 
-    public Iterable<JobResponse> findAllJobsDomain() {
+    public Iterable<Optional<JobResponse>> findAllJobsDomain() {
         return StreamSupport
                 .stream(domainJobRepository.findAll().spliterator(), false)
-                .map(JobMapper::toJobResponse)
+                .map(job -> Optional.of(JobMapper.toJobResponse(job)))
                 .collect(Collectors.toList());
     }
 }

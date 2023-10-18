@@ -16,27 +16,30 @@ public class JobMapperTest {
     private static JobDomain jobDomain;
     private static JobRequest jobRequest;
 
+    private final String message = "first job";
+    private final Long id =1L;
+
     @BeforeAll
-    public static void init () {
-        jobDomain = new JobDomain(1L, "first");
-        jobRequest = new JobRequest("first");
+    public void init () {
+        jobDomain = new JobDomain(1L, message);
+        jobRequest = new JobRequest(message);
     }
 
     @Test
     public void mapToJobResponseFromJobDomain () {
         JobResponse jobResponse = JobMapper.toJobResponse(jobDomain);
 
-        assertEquals(1L, jobResponse.id());
-        assertEquals("first", jobResponse.message());
+        assertEquals(id, jobResponse.id());
+        assertEquals(message, jobResponse.message());
     }
 
     @Test
     public void mapToJobDomainFromJobRequest () {
         JobDomain domain = JobMapper.toJobDomain(jobRequest);
-        domain.setId(1L);
+        domain.setId(id);
 
-        assertEquals(1L, domain.getId());
-        assertEquals("first", domain.getMessage());
+        assertEquals(id, domain.getId());
+        assertEquals(message, domain.getMessage());
     }
 
     @AfterAll
