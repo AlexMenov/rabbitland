@@ -38,7 +38,6 @@ public class DomainJobServiceTest {
         JobRequest request = new JobRequest("first");
         Optional<JobResponse> jobResponse = domainJobService.findJobDomain(1L);
         domainJobRepository.save(JobMapper.toJobDomain(request));
-        assertThat
     }
 
     @Test
