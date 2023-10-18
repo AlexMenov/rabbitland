@@ -9,6 +9,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -22,7 +24,7 @@ public class DomainJobService {
     public Optional<JobResponse> addJobDomain(JobRequest jobRequest) {
         JobDomain jobDomain = JobMapper.toJobDomain(jobRequest);
         jobDomain = domainJobRepository.save(jobDomain);
-        return Optional.of(JobMapper.toJobResponse(jobDomain));
+        return Optional.ofNullable(JobMapper.toJobResponse(jobDomain));
     }
 
     public Optional<JobResponse> findJobDomain(Long id) {
@@ -35,27 +37,23 @@ public class DomainJobService {
     public Optional<JobResponse> updateJobDomain(Long id, JobRequest jobRequest) {
         Optional<JobDomain> domainJob = domainJobRepository.findById(id);
         domainJob.ifPresent(jobDomain -> jobDomain.setMessage(jobRequest.message()));
-        return Optional.of(
-                JobMapper.toJobResponse(
-                        domainJobRepository.save(domainJob.orElseThrow()
-                        )
-                )
-        );
+        return Optional.ofNullable(JobMapper.toJobResponse(domainJobRepository.save(domainJob.orElseThrow())));
     }
 
     @Transactional
-    public Optional<JobResponse> deleteJobDomain(String id) {
+    public Optional<JobResponse> deleteJobDomain(Long id) {
         JobDomain domainJob = domainJobRepository
-                .findById(Long.valueOf(id))
+                .findById(id)
                 .orElseThrow();
         domainJobRepository.deleteById(domainJob.getId());
-        return Optional.of(JobMapper.toJobResponse(domainJob));
+        return Optional.ofNullable(JobMapper.toJobResponse(domainJob));
     }
 
-    public Iterable<Optional<JobResponse>> findAllJobsDomain() {
+    public List<JobResponse> findAllJobsDomain() {
         return StreamSupport
                 .stream(domainJobRepository.findAll().spliterator(), false)
-                .map(job -> Optional.of(JobMapper.toJobResponse(job)))
+                .map(JobMapper::toJobResponse)
+                .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
 }
