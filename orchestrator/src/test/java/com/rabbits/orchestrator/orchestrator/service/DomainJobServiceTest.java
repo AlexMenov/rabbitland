@@ -14,7 +14,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collections;
 import java.util.Optional;
-import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -25,7 +24,7 @@ import static org.mockito.Mockito.*;
 public class DomainJobServiceTest {
 
     private static final String message = "first job";
-    private static final Long id = new Random().nextLong();
+    private static final Long id = 10L;
     private static final String emptyResultError
             = "The obtained result is empty, but it was expected to contain a value.";
     private static final String idResultError
@@ -33,11 +32,13 @@ public class DomainJobServiceTest {
     private static final String messageResultError
             = "The obtained result message does not match the expected message.";
     private static final String updatedMessage = "updated job";
-    private static JobRequest incommingJobRequest;
-    private static JobRequest incommingUpdatedJobRequest;
-    private static JobDomain outcommingExpectedJobDomain;
-    private static JobResponse outcommingExpectedJobResponse;
-    private static JobResponse outcommingUpdatedExpectedJobResponse;
+    private static JobRequest jobRequest;
+    private static JobRequest updatedJobRequest;
+    private static JobDomain expectedJobDomain;
+    private static Optional<JobDomain> expectedOptionalJobDomain;
+    private static Iterable<JobDomain> listOfExpectedJobDomains;
+    private static JobResponse expectedJobResponse;
+    private static JobResponse updatedExpectedJobResponse;
     private static DomainJobService domainJobService;
     private static DomainJobRepository domainJobRepository;
 
@@ -55,62 +56,61 @@ public class DomainJobServiceTest {
     public static void setup() {
         domainJobRepository = Mockito.mock(DomainJobRepository.class);
         domainJobService = new DomainJobService(domainJobRepository);
-        incommingJobRequest = new JobRequest(message);
-        outcommingExpectedJobDomain = JobMapper.toJobDomain(incommingJobRequest);
-        outcommingExpectedJobDomain.setId(id);
-        outcommingExpectedJobResponse = JobMapper.toJobResponse(outcommingExpectedJobDomain);
-        outcommingUpdatedExpectedJobResponse = new JobResponse(id, updatedMessage);
-        incommingUpdatedJobRequest = new JobRequest(updatedMessage);
-    }
-
-    @Test
-    public void testAddJobDomainTest() {
-        when(domainJobRepository.save(any(JobDomain.class))).thenReturn(outcommingExpectedJobDomain);
-        Optional<JobResponse> obtainedResult = domainJobService.addJobDomain(incommingJobRequest);
-        checkResultIfIsPresentAndHasState(obtainedResult, outcommingExpectedJobResponse);
-        verify(domainJobRepository, atLeastOnce()).save(any(JobDomain.class));
-    }
-
-    @Test
-    public void testFindJobDomainById() {
-        Optional<JobDomain> jobDomain = Optional.of(new JobDomain(id, message));
-        when(domainJobRepository.findById(id)).thenReturn(jobDomain);
-        Optional<JobResponse> obtainedResult = domainJobService.findJobDomain(id);
-        checkResultIfIsPresentAndHasState(obtainedResult, outcommingExpectedJobResponse);
-        verify(domainJobRepository, atLeastOnce()).findById(id);
-    }
-
-    @Test
-    public void testUpdateJobDomain() {
-        when(domainJobRepository.findById(id)).thenReturn(Optional.of(outcommingExpectedJobDomain));
-        when(domainJobRepository.save(any(JobDomain.class))).thenReturn(outcommingExpectedJobDomain);
-        Optional<JobResponse> obtainedResult = domainJobService.updateJobDomain(id, incommingUpdatedJobRequest);
-        checkResultIfIsPresentAndHasState(obtainedResult, outcommingUpdatedExpectedJobResponse);
-        verify(domainJobRepository, atLeastOnce()).save(any(JobDomain.class));
-    }
-
-    @Test
-    public void testDeleteJobDomainById() {
-        Optional<JobDomain> jobDomain = Optional.of(new JobDomain(id, message));
-        when(domainJobRepository.findById(id)).thenReturn(jobDomain);
-        doNothing().when(domainJobRepository).deleteById(id);
-        Optional<JobResponse> obtainedResult = domainJobService.deleteJobDomain(String.valueOf(id));
-        checkResultIfIsPresentAndHasState(obtainedResult, outcommingExpectedJobResponse);
-        verify(domainJobRepository, atLeastOnce()).deleteById(id);
-    }
-
-    @Test
-    public void testFindAllJobsDomain() {
-        Iterable<JobDomain> jobDomains = Collections.singleton(new JobDomain(id, message));
-        when(domainJobRepository.findAll()).thenReturn(jobDomains);
-        Iterable<Optional<JobResponse>> obtainedResult = domainJobService.findAllJobsDomain();
-        obtainedResult.forEach(job -> checkResultIfIsPresentAndHasState(job, outcommingExpectedJobResponse));
-        verify(domainJobRepository, atLeastOnce()).findAll();
+        jobRequest = new JobRequest(message);
+        expectedJobDomain = JobMapper.toJobDomain(jobRequest);
+        expectedJobDomain.setId(id);
+        expectedJobResponse = JobMapper.toJobResponse(expectedJobDomain);
+        updatedExpectedJobResponse = new JobResponse(id, updatedMessage);
+        updatedJobRequest = new JobRequest(updatedMessage);
+        expectedOptionalJobDomain = Optional.of(new JobDomain(id, message));
+        listOfExpectedJobDomains = Collections.singleton(new JobDomain(id, message));
     }
 
     @AfterAll
     public static void cleanup() {
         Mockito.reset(domainJobRepository);
+    }
+
+    @Test
+    public void testAddJobDomainTest() {
+        when(domainJobRepository.save(any(JobDomain.class))).thenReturn(expectedJobDomain);
+        Optional<JobResponse> obtainedResult = domainJobService.addJobDomain(jobRequest);
+        checkResultIfIsPresentAndHasState(obtainedResult, expectedJobResponse);
+        verify(domainJobRepository, atLeastOnce()).save(any(JobDomain.class));
+    }
+
+    @Test
+    public void testFindJobDomainById() {
+        when(domainJobRepository.findById(id)).thenReturn(expectedOptionalJobDomain);
+        Optional<JobResponse> obtainedResult = domainJobService.findJobDomain(id);
+        checkResultIfIsPresentAndHasState(obtainedResult, expectedJobResponse);
+        verify(domainJobRepository, atLeastOnce()).findById(id);
+    }
+
+    @Test
+    public void testUpdateJobDomain() {
+        when(domainJobRepository.findById(id)).thenReturn(Optional.of(expectedJobDomain));
+        when(domainJobRepository.save(any(JobDomain.class))).thenReturn(expectedJobDomain);
+        Optional<JobResponse> obtainedResult = domainJobService.updateJobDomain(id, updatedJobRequest);
+        checkResultIfIsPresentAndHasState(obtainedResult, updatedExpectedJobResponse);
+        verify(domainJobRepository, atLeastOnce()).save(any(JobDomain.class));
+    }
+
+    @Test
+    public void testDeleteJobDomainById() {
+        when(domainJobRepository.findById(id)).thenReturn(expectedOptionalJobDomain);
+        doNothing().when(domainJobRepository).deleteById(id);
+        Optional<JobResponse> obtainedResult = domainJobService.deleteJobDomain(String.valueOf(id));
+        checkResultIfIsPresentAndHasState(obtainedResult, expectedJobResponse);
+        verify(domainJobRepository, atLeastOnce()).deleteById(id);
+    }
+
+    @Test
+    public void testFindAllJobsDomain() {
+        when(domainJobRepository.findAll()).thenReturn(listOfExpectedJobDomains);
+        Iterable<Optional<JobResponse>> obtainedResult = domainJobService.findAllJobsDomain();
+        obtainedResult.forEach(job -> checkResultIfIsPresentAndHasState(job, expectedJobResponse));
+        verify(domainJobRepository, atLeastOnce()).findAll();
     }
 }
 
