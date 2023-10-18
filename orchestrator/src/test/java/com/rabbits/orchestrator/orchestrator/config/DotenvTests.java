@@ -1,4 +1,4 @@
-package com.rabbits.orchestrator.orchestrator;
+package com.rabbits.orchestrator.orchestrator.config;
 
 import io.github.cdimascio.dotenv.Dotenv;
 import io.github.cdimascio.dotenv.DotenvEntry;
