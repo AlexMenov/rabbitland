@@ -20,6 +20,9 @@ public class TestedData {
             = "The obtained result message does not match the expected message.";
     public static final String updatedMessage = "updated job";
     public static final String orchestratorApiUrl = "/api/orchestrator/jobs/";
+    public static final String expectedJson = "{\"id\":10,\"message\":\"first job\"}";
+    public static final String expectedUpdatedJson = "{\"id\":10,\"message\":\"updated job\"}";
+    public static final String expectedListJson = "[{\"id\":10,\"message\":\"first job\"}]";
     public static final JobRequest jobRequest;
     public static final JobRequest updatedJobRequest;
     public static final JobDomain expectedJobDomain;

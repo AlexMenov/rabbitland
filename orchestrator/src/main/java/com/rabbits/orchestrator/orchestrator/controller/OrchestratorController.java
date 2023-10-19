@@ -35,35 +35,35 @@ public class OrchestratorController {
         }
     }
 
-    private static <T> ResponseEntity<T> createResponse(Optional<T> response, HttpStatus success) {
+    private static <T> ResponseEntity<T> createResponse(Optional<T> response) {
         return response
-                .map(value -> new ResponseEntity<>(value, success))
+                .map(value -> new ResponseEntity<>(value, HttpStatus.OK))
                 .orElseThrow(JobResponseNotFoundException::new);
     }
 
     @PutMapping
     public ResponseEntity<JobResponse> addJobDomain(@Valid @RequestBody JobRequest jobRequest) {
-        return createResponse(domainJobService.addJobDomain(jobRequest), HttpStatus.CREATED);
+        return createResponse(domainJobService.addJobDomain(jobRequest));
     }
 
     @GetMapping(path = {"{id}"})
     public ResponseEntity<JobResponse> getJobDomain(@PathVariable String id) {
-        return createResponse(domainJobService.findJobDomain(parseIdIfCorrect(id)), HttpStatus.OK);
+        return createResponse(domainJobService.findJobDomain(parseIdIfCorrect(id)));
     }
 
     @PostMapping("{id}")
     public ResponseEntity<JobResponse> updateJobDomain(@PathVariable String id, @Valid @RequestBody JobRequest jobRequest) {
-        return createResponse(domainJobService.updateJobDomain(parseIdIfCorrect(id), jobRequest), HttpStatus.OK);
+        return createResponse(domainJobService.updateJobDomain(parseIdIfCorrect(id), jobRequest));
     }
 
     @DeleteMapping("{id}")
     public ResponseEntity<JobResponse> deleteJobDomain(@PathVariable String id) {
-        return createResponse(domainJobService.deleteJobDomain(parseIdIfCorrect(id)), HttpStatus.OK);
+        return createResponse(domainJobService.deleteJobDomain(parseIdIfCorrect(id)));
     }
 
     @GetMapping
     public ResponseEntity<List<JobResponse>> findAllJobsDomains() {
-        return createResponse(Optional.of(domainJobService.findAllJobsDomain()), HttpStatus.OK);
+        return createResponse(Optional.of(domainJobService.findAllJobsDomain()));
     }
 }
 
