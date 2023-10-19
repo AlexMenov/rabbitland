@@ -13,6 +13,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -58,6 +59,7 @@ public class DomainJobServiceTest {
         domainJobService = new DomainJobService(domainJobRepository);
         jobRequest = new JobRequest(message);
         expectedJobDomain = JobMapper.toJobDomain(jobRequest);
+        assert expectedJobDomain != null;
         expectedJobDomain.setId(id);
         expectedJobResponse = JobMapper.toJobResponse(expectedJobDomain);
         updatedExpectedJobResponse = new JobResponse(id, updatedMessage);
@@ -100,7 +102,7 @@ public class DomainJobServiceTest {
     public void testDeleteJobDomainById() {
         when(domainJobRepository.findById(id)).thenReturn(expectedOptionalJobDomain);
         doNothing().when(domainJobRepository).deleteById(id);
-        Optional<JobResponse> obtainedResult = domainJobService.deleteJobDomain(String.valueOf(id));
+        Optional<JobResponse> obtainedResult = domainJobService.deleteJobDomain(id);
         checkResultIfIsPresentAndHasState(obtainedResult, expectedJobResponse);
         verify(domainJobRepository, atLeastOnce()).deleteById(id);
     }
@@ -108,8 +110,8 @@ public class DomainJobServiceTest {
     @Test
     public void testFindAllJobsDomain() {
         when(domainJobRepository.findAll()).thenReturn(listOfExpectedJobDomains);
-        Iterable<Optional<JobResponse>> obtainedResult = domainJobService.findAllJobsDomain();
-        obtainedResult.forEach(job -> checkResultIfIsPresentAndHasState(job, expectedJobResponse));
+        List<JobResponse> obtainedResult = domainJobService.findAllJobsDomain();
+        obtainedResult.forEach(job -> checkResultIfIsPresentAndHasState(Optional.ofNullable(job), expectedJobResponse));
         verify(domainJobRepository, atLeastOnce()).findAll();
     }
 }

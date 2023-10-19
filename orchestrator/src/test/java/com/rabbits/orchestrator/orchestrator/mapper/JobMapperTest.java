@@ -3,7 +3,6 @@ package com.rabbits.orchestrator.orchestrator.mapper;
 import com.rabbits.orchestrator.orchestrator.model.JobDomain;
 import com.rabbits.orchestrator.orchestrator.model.JobRequest;
 import com.rabbits.orchestrator.orchestrator.model.JobResponse;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -17,16 +16,16 @@ public class JobMapperTest {
     private static JobRequest jobRequest;
 
     private final String message = "first job";
-    private final Long id =1L;
+    private final Long id = 1L;
 
     @BeforeAll
-    public void init () {
+    public void setup() {
         jobDomain = new JobDomain(1L, message);
         jobRequest = new JobRequest(message);
     }
 
     @Test
-    public void mapToJobResponseFromJobDomain () {
+    public void mapToJobResponseFromJobDomain() {
         JobResponse jobResponse = JobMapper.toJobResponse(jobDomain);
 
         assertEquals(id, jobResponse.id());
@@ -34,17 +33,11 @@ public class JobMapperTest {
     }
 
     @Test
-    public void mapToJobDomainFromJobRequest () {
+    public void mapToJobDomainFromJobRequest() {
         JobDomain domain = JobMapper.toJobDomain(jobRequest);
         domain.setId(id);
 
         assertEquals(id, domain.getId());
         assertEquals(message, domain.getMessage());
-    }
-
-    @AfterAll
-    public static void setNullValue () {
-        jobDomain = null;
-        jobRequest = null;
     }
 }
