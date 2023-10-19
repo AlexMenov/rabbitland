@@ -1,6 +1,7 @@
 package com.rabbits.orchestrator.orchestrator.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.rabbits.orchestrator.orchestrator.model.JobRequest;
 import com.rabbits.orchestrator.orchestrator.service.DomainJobService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,7 +18,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import java.util.Optional;
 
 import static com.rabbits.orchestrator.orchestrator.TestedData.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -49,6 +50,7 @@ public class OrchestratorControllerTest {
                         .content(mapper.writeValueAsString(jobRequest)),
                 expectedJson
         );
+        verify(domainJobService, atLeastOnce()).addJobDomain(any(JobRequest.class));
     }
 
     @Test
@@ -60,6 +62,7 @@ public class OrchestratorControllerTest {
                         .content(mapper.writeValueAsString(jobRequest)),
                 expectedJson
         );
+        verify(domainJobService, atLeastOnce()).findJobDomain(id);
     }
 
     @Test
@@ -71,6 +74,7 @@ public class OrchestratorControllerTest {
                         .content(mapper.writeValueAsString(updatedJobRequest)),
                 expectedUpdatedJson
         );
+        verify(domainJobService, atLeastOnce()).updateJobDomain(eq(id), any(JobRequest.class));
     }
 
     @Test
@@ -81,6 +85,7 @@ public class OrchestratorControllerTest {
                         .request(HttpMethod.DELETE, orchestratorApiUrl + id),
                 expectedJson
         );
+        verify(domainJobService, atLeastOnce()).deleteJobDomain(id);
     }
 
     @Test
@@ -91,6 +96,7 @@ public class OrchestratorControllerTest {
                         .request(HttpMethod.GET, orchestratorApiUrl),
                 expectedListJson
         );
+        verify(domainJobService, atLeastOnce()).findAllJobsDomain();
     }
 }
 
