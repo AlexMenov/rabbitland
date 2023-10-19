@@ -18,7 +18,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping(
-        path = "/api/orchestrator/jobs",
+        path = "/api/orchestrator/jobs/",
         consumes = MediaType.APPLICATION_JSON_VALUE,
         produces = MediaType.APPLICATION_JSON_VALUE
 )
@@ -46,23 +46,23 @@ public class OrchestratorController {
         return createResponse(domainJobService.addJobDomain(jobRequest), HttpStatus.CREATED);
     }
 
-    @GetMapping(path = {"/{id}"})
+    @GetMapping(path = {"{id}"})
     public ResponseEntity<JobResponse> getJobDomain(@PathVariable String id) {
         return createResponse(domainJobService.findJobDomain(parseIdIfCorrect(id)), HttpStatus.OK);
     }
 
-    @PostMapping("/{id}")
+    @PostMapping("{id}")
     public ResponseEntity<JobResponse> updateJobDomain(@PathVariable String id, @Valid @RequestBody JobRequest jobRequest) {
         return createResponse(domainJobService.updateJobDomain(parseIdIfCorrect(id), jobRequest), HttpStatus.OK);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("{id}")
     public ResponseEntity<JobResponse> deleteJobDomain(@PathVariable String id) {
         return createResponse(domainJobService.deleteJobDomain(parseIdIfCorrect(id)), HttpStatus.OK);
     }
 
     @GetMapping
-    public ResponseEntity<List<JobResponse>> findAllJobs() {
+    public ResponseEntity<List<JobResponse>> findAllJobsDomains() {
         return createResponse(Optional.of(domainJobService.findAllJobsDomain()), HttpStatus.OK);
     }
 }

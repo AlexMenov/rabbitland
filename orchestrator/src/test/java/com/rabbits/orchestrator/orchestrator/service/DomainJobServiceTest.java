@@ -1,8 +1,6 @@
 package com.rabbits.orchestrator.orchestrator.service;
 
-import com.rabbits.orchestrator.orchestrator.mapper.JobMapper;
 import com.rabbits.orchestrator.orchestrator.model.JobDomain;
-import com.rabbits.orchestrator.orchestrator.model.JobRequest;
 import com.rabbits.orchestrator.orchestrator.model.JobResponse;
 import com.rabbits.orchestrator.orchestrator.repository.DomainJobRepository;
 import org.junit.jupiter.api.AfterAll;
@@ -12,7 +10,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,26 +17,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
+import static com.rabbits.orchestrator.orchestrator.TestedData.*;
 
 @ExtendWith(MockitoExtension.class)
 public class DomainJobServiceTest {
 
-    private static final String message = "first job";
-    private static final Long id = 10L;
-    private static final String emptyResultError
-            = "The obtained result is empty, but it was expected to contain a value.";
-    private static final String idResultError
-            = "The obtained result ID does not match the expected ID.";
-    private static final String messageResultError
-            = "The obtained result message does not match the expected message.";
-    private static final String updatedMessage = "updated job";
-    private static JobRequest jobRequest;
-    private static JobRequest updatedJobRequest;
-    private static JobDomain expectedJobDomain;
-    private static Optional<JobDomain> expectedOptionalJobDomain;
-    private static Iterable<JobDomain> listOfExpectedJobDomains;
-    private static JobResponse expectedJobResponse;
-    private static JobResponse updatedExpectedJobResponse;
     private static DomainJobService domainJobService;
     private static DomainJobRepository domainJobRepository;
 
@@ -57,15 +39,6 @@ public class DomainJobServiceTest {
     public static void setup() {
         domainJobRepository = Mockito.mock(DomainJobRepository.class);
         domainJobService = new DomainJobService(domainJobRepository);
-        jobRequest = new JobRequest(message);
-        expectedJobDomain = JobMapper.toJobDomain(jobRequest);
-        assert expectedJobDomain != null;
-        expectedJobDomain.setId(id);
-        expectedJobResponse = JobMapper.toJobResponse(expectedJobDomain);
-        updatedExpectedJobResponse = new JobResponse(id, updatedMessage);
-        updatedJobRequest = new JobRequest(updatedMessage);
-        expectedOptionalJobDomain = Optional.of(new JobDomain(id, message));
-        listOfExpectedJobDomains = Collections.singleton(new JobDomain(id, message));
     }
 
     @AfterAll
