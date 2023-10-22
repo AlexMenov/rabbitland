@@ -28,6 +28,7 @@ public class JobMapperTest {
     public void mapToJobResponseFromJobDomain() {
         JobResponse jobResponse = JobMapper.toJobResponse(jobDomain);
 
+        assert jobResponse != null;
         assertEquals(id, jobResponse.id());
         assertEquals(message, jobResponse.message());
     }

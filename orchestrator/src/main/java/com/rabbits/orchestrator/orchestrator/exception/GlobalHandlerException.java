@@ -7,25 +7,22 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class GlobalHandlerException {
-    private static ErrorMessageException createExceptionResponseEntity(RuntimeException exception) {
+
+    @ExceptionHandler({JobIdIsNotValidException.class})
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public ErrorMessageException handleJobIdIsNotValidException(JobIdIsNotValidException exception) {
         return new ErrorMessageException(exception.getMessage());
     }
 
-    @ExceptionHandler({JobIdIsNotValidException.class})
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorMessageException handleJobIdIsNotValidException(JobIdIsNotValidException exception) {
-        return createExceptionResponseEntity(exception);
-    }
-
     @ExceptionHandler({JobRequestIllegalException.class})
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public ErrorMessageException handleJobRequestIllegalException(JobRequestIllegalException exception) {
-        return createExceptionResponseEntity(exception);
+        return new ErrorMessageException(exception.getMessage());
     }
 
     @ExceptionHandler({JobResponseNotFoundException.class})
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public ErrorMessageException handleJobResponseNotFoundException(JobResponseNotFoundException exception) {
-        return createExceptionResponseEntity(exception);
+        return new ErrorMessageException(exception.getMessage());
     }
 }
