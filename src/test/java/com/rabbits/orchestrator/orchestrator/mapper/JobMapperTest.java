@@ -3,45 +3,57 @@ package com.rabbits.orchestrator.orchestrator.mapper;
 import com.rabbits.orchestrator.orchestrator.model.JobDomain;
 import com.rabbits.orchestrator.orchestrator.model.JobRequest;
 import com.rabbits.orchestrator.orchestrator.model.JobResponse;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
+import com.rabbits.orchestrator.orchestrator.service.DomainJobService;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.*;
+import org.testcontainers.shaded.org.checkerframework.checker.nullness.qual.Nullable;
+
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class JobMapperTest {
-
     private static JobDomain jobDomain;
     private static JobRequest jobRequest;
+    private final String message = "first job";
+    private final Long id = 1L;
+
+
+    @RepeatedTest(value = 5, name = RepeatedTest.LONG_DISPLAY_NAME)
+    @Timeout(value = 200L, unit = TimeUnit.MILLISECONDS)
+    public void mapToJobResponseFromJobDomain(Long id, String message) {
+        JobResponse jobResponse
+                = JobMapper.toJobResponse(new JobDomain(message));
+
+        assertEquals(id, jobResponse.id());
+        assertEquals(message, jobResponse.message());
+    }
+
+    static Stream<Arguments> getArgumentsForMapToJobResponse () {
+        return Stream.of(
+                Arguments.of(10, "Alex"),
+                Arguments.of(null, "Alex"),
+                Arguments.of(10, null)
+        );
+    }
 
     @BeforeAll
-    public static void init () {
-        jobDomain = new JobDomain(1L, "first");
-        jobRequest = new JobRequest("first");
+    public void setup() {
+        jobDomain = new JobDomain(1L, message);
+        jobRequest = new JobRequest(message);
     }
 
-    @Test
-    public void mapToJobResponseFromJobDomain () {
-        JobResponse jobResponse = JobMapper.toJobResponse(jobDomain);
-
-        assertEquals(1L, jobResponse.id());
-        assertEquals("first", jobResponse.message());
-    }
 
     @Test
-    public void mapToJobDomainFromJobRequest () {
+    public void mapToJobDomainFromJobRequest() {
+        System.out.println();
         JobDomain domain = JobMapper.toJobDomain(jobRequest);
-        domain.setId(1L);
+        domain.setId(id);
 
-        assertEquals(1L, domain.getId());
-        assertEquals("first", domain.getMessage());
-    }
-
-    @AfterAll
-    public static void setNullValue () {
-        jobDomain = null;
-        jobRequest = null;
+        assertEquals(id, domain.getId());
+        assertEquals(message, domain.getMessage());
     }
 }

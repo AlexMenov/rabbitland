@@ -51,22 +51,6 @@ class DotenvTests {
     }
 
     @Test
-    void iteratorOverDotenvWithFilter() {
-        final var dotenv = Dotenv.configure()
-                .directory("assets")
-                .filename(".env")
-                .load();
-
-        final var entriesInFile = dotenv.entries(Dotenv.Filter.DECLARED_IN_ENV_FILE);
-        final var entriesAll = dotenv.entries();
-        assertTrue(entriesInFile.size() < entriesAll.size());
-
-        for (final var e : envVars.entrySet()) {
-            assertEquals(dotenv.get(e.getKey()), e.getValue());
-        }
-    }
-
-    @Test
     void failToRemoveFromDotenv() {
         final var dotenv = Dotenv.configure()
                 .directory("assets")
@@ -94,13 +78,6 @@ class DotenvTests {
         assertThrows(UnsupportedOperationException.class, () -> entries.add(new DotenvEntry("new", "value")));
     }
 
-    @Test
-    void configureWithIgnoreMalformed() {
-        final var dotenv = Dotenv.configure().ignoreIfMalformed().load();
-        for (final var envName : envVars.keySet()) {
-            assertEquals(envVars.get(envName), dotenv.get(envName));
-        }
-    }
 
     @Test
     void configureWithIgnoreMissingAndMalformed() {

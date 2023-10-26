@@ -1,0 +1,4 @@
+CREATE TABLE IF NOT EXISTS domain_jobs (
+    id BIGSERIAL PRIMARY KEY,
+    message TEXT NOT NULL
+);

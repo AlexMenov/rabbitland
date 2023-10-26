@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class EnvConfig {
-    private static final Dotenv dotenv;
+    public static final Dotenv dotenv;
 
     static {
         dotenv = Dotenv.configure()

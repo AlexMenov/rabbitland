@@ -33,5 +33,5 @@ final public class JobDomain {
     public JobDomain (String message) {
         this.message = message;
     }
-
 }
+
