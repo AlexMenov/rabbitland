@@ -7,6 +7,9 @@ import com.rabbits.orchestrator.orchestrator.model.JobRequest;
 import com.rabbits.orchestrator.orchestrator.model.JobResponse;
 
 public class JobMapper {
+    private JobMapper() {
+    }
+
     public static JobResponse toJobResponse(JobDomain domain) {
         try {
             return new JobResponse(domain.getId(), domain.getMessage());

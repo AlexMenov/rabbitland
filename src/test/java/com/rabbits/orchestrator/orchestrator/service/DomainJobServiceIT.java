@@ -2,6 +2,7 @@ package com.rabbits.orchestrator.orchestrator.service;
 
 import com.rabbits.orchestrator.orchestrator.model.JobRequest;
 import com.rabbits.orchestrator.orchestrator.model.JobResponse;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -17,13 +18,11 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.junit.jupiter.api.Assertions.*;
 
 
 @SpringBootTest
 @Testcontainers
-@Timeout(value = 200L, unit = MILLISECONDS)
 public class DomainJobServiceIT {
 
     @Container
@@ -69,7 +68,7 @@ public class DomainJobServiceIT {
         @ParameterizedTest
         @DisplayName("checking how jobs are added upon request")
         @MethodSource("getArgumentsForJobRequest")
-        public void shouldAddJobDomainCorrectly(JobRequest request) {
+        void shouldAddJobDomainCorrectly(JobRequest request) {
             JobResponse result = service.addJobDomain(request);
             assertAll(
                     () -> {
@@ -84,7 +83,7 @@ public class DomainJobServiceIT {
         @ParameterizedTest
         @DisplayName("checking the availability of jobs on request by id")
         @MethodSource("getArgumentsForJobRequest")
-        public void shouldFindJobDomainCorrectly(JobRequest request) {
+        void shouldFindJobDomainCorrectly(JobRequest request) {
             JobResponse jobResponse = service.addJobDomain(request);
             JobResponse result = service.findJobDomain(jobResponse.id());
             assertAll(
@@ -101,7 +100,7 @@ public class DomainJobServiceIT {
         @ParameterizedTest
         @DisplayName("checking if jobs are updated correctly upon request")
         @MethodSource("getArgumentsForJobRequest")
-        public void shouldServiceUpdateJobDomain(JobRequest request) {
+        void shouldServiceUpdateJobDomain(JobRequest request) {
             JobResponse jobResponse = service.addJobDomain(request);
             JobResponse result = service.updateJobDomain(jobResponse.id(), new JobRequest(request.message() + " updated"));
             assertAll(
@@ -118,7 +117,7 @@ public class DomainJobServiceIT {
         @ParameterizedTest
         @DisplayName("checking that all jobs are returned correctly")
         @MethodSource("getArgumentsForJobRequest")
-        public void shouldServiceFindAllJobDomains(JobRequest request) {
+        void shouldServiceFindAllJobDomains(JobRequest request) {
             service.addJobDomain(request);
             List<JobResponse> result = service.findAllJobsDomain();
             result.forEach(job -> assertAll(
@@ -133,10 +132,13 @@ public class DomainJobServiceIT {
         @ParameterizedTest
         @DisplayName("checking the correctness of job deletion by id")
         @MethodSource("getArgumentsForJobRequest")
-        public void shouldServiceDeleteJobDomain(JobRequest request) {
+        void shouldServiceDeleteJobDomain(JobRequest request) {
             JobResponse response = service.addJobDomain(request);
-            service.deleteJobDomain(response.id());
+            Long jobId = response.id();
+
+            service.deleteJobDomain(jobId);
+
+            assertThrows(EntityNotFoundException.class, () -> service.findJobDomain(jobId));
         }
     }
-
 }

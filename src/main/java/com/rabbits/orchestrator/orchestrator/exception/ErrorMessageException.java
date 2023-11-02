@@ -8,7 +8,7 @@ import java.util.Date;
 
 @Getter
 @Setter
-sealed public class ErrorMessageException
+public sealed class ErrorMessageException
         extends RuntimeException
         permits
         JobIdIsNotValidException,

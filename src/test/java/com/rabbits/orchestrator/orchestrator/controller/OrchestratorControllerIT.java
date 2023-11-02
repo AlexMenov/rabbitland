@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -73,10 +72,6 @@ public class OrchestratorControllerIT {
         );
     }
 
-    @Test
-    void contextLoads() {
-    }
-
     @BeforeEach
     public void set() {
         URL = "http://localhost:" + port + "/api/orchestrator/jobs/";
@@ -90,7 +85,7 @@ public class OrchestratorControllerIT {
     @ParameterizedTest
     @DisplayName("checking how jobs are added upon request")
     @MethodSource("getArgumentsForJobRequest")
-    public void shouldAddJobDomain(JobRequest request) {
+    void shouldAddJobDomain(JobRequest request) {
         ResponseEntity<JobResponse> result = restTemplate.postForEntity(URL, request, JobResponse.class);
 
         assertAll(
@@ -106,7 +101,7 @@ public class OrchestratorControllerIT {
     @ParameterizedTest
     @DisplayName("checking the availability of jobs on request by id")
     @MethodSource("getArgumentsForJobRequest")
-    public void shouldFindJobDomainCorrectly(JobRequest request) {
+    void shouldFindJobDomainCorrectly(JobRequest request) {
         ResponseEntity<JobResponse> result = restTemplate.postForEntity(URL, request, JobResponse.class);
 
         ResponseEntity<JobResponse> finalResult = restTemplate.getForEntity(URL + Objects.requireNonNull(result.getBody()).id(), JobResponse.class);
@@ -124,7 +119,7 @@ public class OrchestratorControllerIT {
     @ParameterizedTest
     @DisplayName("checking if jobs are updated correctly upon request")
     @MethodSource("getArgumentsForJobRequest")
-    public void shouldServiceUpdateJobDomain(JobRequest request) {
+    void shouldServiceUpdateJobDomain(JobRequest request) {
         ResponseEntity<JobResponse> result = restTemplate.postForEntity(URL, request, JobResponse.class);
 
         HttpEntity<JobRequest> httpEntity = new HttpEntity<>(new JobRequest(request.message() + " updated"));
@@ -147,27 +142,26 @@ public class OrchestratorControllerIT {
     @ParameterizedTest
     @DisplayName("checking that all jobs are returned correctly")
     @MethodSource("getArgumentsForJobRequest")
-    public void shouldServiceFindAllJobDomains(JobRequest request) {
+    void shouldServiceFindAllJobDomains(JobRequest request) {
         ResponseEntity<JobResponse> result = restTemplate.postForEntity(URL, request, JobResponse.class);
         ResponseEntity<JobResponse[]> finalResult = restTemplate.getForEntity(URL, JobResponse[].class);
-        assertEquals(OK, finalResult.getStatusCode()); // equals result
+        assertEquals(OK, finalResult.getStatusCode());
         assertEquals(1, Objects.requireNonNull(finalResult.getBody()).length);
         Stream<JobResponse> stream = Arrays.stream(Objects.requireNonNull(finalResult.getBody()));
-//        stream.filter(job -> job.equals(result.getBody())).count();
         stream
                 .forEach(job -> assertAll(
-                () -> {
-                    assertNotNull(job);
-                    assertNotNull(job.id());
-                    assertNotNull(job.message());
-                }
-        ));
+                        () -> {
+                            assertNotNull(job);
+                            assertNotNull(job.id());
+                            assertNotNull(job.message());
+                        }
+                ));
     }
 
     @ParameterizedTest
     @DisplayName("checking the correctness of job deletion by id")
     @MethodSource("getArgumentsForJobRequest")
-    public void shouldServiceDeleteJobDomain(JobRequest request) {
+    void shouldServiceDeleteJobDomain(JobRequest request) {
         ResponseEntity<JobResponse> result = restTemplate.postForEntity(URL, request, JobResponse.class);
         ResponseEntity<Void> deleteResponse
                 = restTemplate.exchange(URL + Objects.requireNonNull(result.getBody()).id(), DELETE, null, Void.class);

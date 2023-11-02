@@ -3,8 +3,10 @@ package com.rabbits.orchestrator.orchestrator.controller;
 import com.rabbits.orchestrator.orchestrator.model.JobRequest;
 import com.rabbits.orchestrator.orchestrator.model.JobResponse;
 import com.rabbits.orchestrator.orchestrator.service.DomainJobService;
+import io.swagger.annotations.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Description;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,7 +16,6 @@ import static org.springframework.http.HttpStatus.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.http.ResponseEntity.noContent;
 import static org.springframework.http.ResponseEntity.status;
-
 
 @RestController
 @RequestMapping(
@@ -32,18 +33,17 @@ public class OrchestratorController {
     }
 
     @GetMapping(path = {"{id}"})
-    public ResponseEntity<JobResponse> findJobDomain(@PathVariable Long id) {
+    public ResponseEntity<JobResponse> findJobDomain(@PathVariable long id) {
         return status(OK).body(domainJobService.findJobDomain(id));
     }
 
     @PutMapping(value = "{id}", consumes = APPLICATION_JSON_VALUE)
-    public ResponseEntity<JobResponse> updateJobDomain(@PathVariable Long id, @Valid @RequestBody JobRequest jobRequest) {
+    public ResponseEntity<JobResponse> updateJobDomain(@PathVariable long id, @Valid @RequestBody JobRequest jobRequest) {
         return status(OK).body(domainJobService.updateJobDomain(id, jobRequest));
     }
 
-    @ResponseStatus(NO_CONTENT)
     @DeleteMapping("{id}")
-    public ResponseEntity<Void> deleteJobDomain(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteJobDomain(@PathVariable long id) {
         domainJobService.deleteJobDomain(id);
         return noContent().build();
     }

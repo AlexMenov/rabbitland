@@ -11,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.rabbits.orchestrator.orchestrator.mapper.JobMapper.toJobDomain;
 import static com.rabbits.orchestrator.orchestrator.mapper.JobMapper.toJobResponse;
@@ -32,7 +31,7 @@ public class DomainJobService {
         return domainJobRepository
                 .findById(id)
                 .map(JobMapper::toJobResponse)
-                .orElseThrow(EntityNotFoundException::new);
+                .orElseThrow(() -> new EntityNotFoundException("Entity with id " + id + " not found"));
     }
 
     @Transactional
@@ -44,7 +43,7 @@ public class DomainJobService {
                     return domainJobRepository.save(jobDomain);
                 })
                 .map(JobMapper::toJobResponse)
-                .orElseThrow(EntityNotFoundException::new);
+                .orElseThrow(() -> new EntityNotFoundException("Entity with id " + id + " not found"));
     }
 
     public void deleteJobDomain(Long id) {
@@ -55,6 +54,6 @@ public class DomainJobService {
     public List<JobResponse> findAllJobsDomain() {
         return stream(domainJobRepository.findAll().spliterator(), false)
                 .map(JobMapper::toJobResponse)
-                .collect(Collectors.toList());
+                .toList();
     }
 }
