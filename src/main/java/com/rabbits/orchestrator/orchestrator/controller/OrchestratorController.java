@@ -3,10 +3,8 @@ package com.rabbits.orchestrator.orchestrator.controller;
 import com.rabbits.orchestrator.orchestrator.model.JobRequest;
 import com.rabbits.orchestrator.orchestrator.model.JobResponse;
 import com.rabbits.orchestrator.orchestrator.service.DomainJobService;
-import io.swagger.annotations.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Description;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
